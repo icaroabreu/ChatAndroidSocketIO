@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ChatTest</string>
+    <string name="author_name">Ícaro Abreu</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="btn_join">JOIN</string>
+    <string name="btn_send">Send</string>
+
+</resources>
