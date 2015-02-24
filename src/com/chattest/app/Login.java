@@ -1,22 +1,11 @@
 package com.chattest.app;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.URISyntaxException;
 
-import org.json.JSONArray;
-
-import com.koushikdutta.async.http.socketio.Acknowledge;
-import com.koushikdutta.async.http.socketio.ConnectCallback;
-import com.koushikdutta.async.http.socketio.EventCallback;
-import com.koushikdutta.async.http.socketio.SocketIOClient;
+import org.json.JSONObject;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,16 +13,27 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
 @SuppressWarnings("deprecation")
 public class Login extends Fragment {
 
 	private View view;
 
-	private Socket socket;
-
 	private EditText name;
 
 	private Button btn_join;
+
+	private Socket socket;
+	{
+		try {
+			socket = IO.socket("http://sucket.herokuapp.com/");
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,28 +46,12 @@ public class Login extends Fragment {
 
 		getActivity().getActionBar().hide();
 
-		SocketIOClient.connect("http://sucket.herokuapp.com/", new ConnectCallback() {
-			
-			@Override
-			public void onConnectCompleted(Exception ex, SocketIOClient client) {
-				
-				Log.d("Login", "conection on");
-				
-				client.emit("setNickname", new JSONArray().put("Icaro"));							
-				
-				client.on("old_messages", new EventCallback() {
-					
-					@Override
-					public void onEvent(String event, JSONArray argument,
-							Acknowledge acknowledge) {
-						
-						Log.d("Login", event + " " + argument.toString());
-						
-					}
-				});							
-				
-			}
-		}, new Handler());
+		setHasOptionsMenu(false);
+		
+		socket.on("old_messages", onOldMessages);
+		socket.connect();
+		socket.emit("setNickname", "Icaro");
+		
 
 		btn_join.setOnClickListener(new View.OnClickListener() {
 
@@ -79,5 +63,16 @@ public class Login extends Fragment {
 
 		return view;
 	}
+	
+	public Emitter.Listener onOldMessages = new Emitter.Listener() {
+		
+		@Override
+		public void call(Object... messages) {
+			
+			JSONObject data = (JSONObject)messages[0];
+			
+			Log.d("Login", data.toString());
+		}
+	};
 
 }
