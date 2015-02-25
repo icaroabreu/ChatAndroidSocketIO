@@ -1,25 +1,41 @@
 package com.chattest.app;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
+
+import com.chattest.app.controller.DatabaseHelper;
+import com.chattest.app.controller.DatabaseManager;
+import com.chattest.app.utility.Constant;
 
 
 
 public class MainActivity extends Activity {
-		
+	
+	private SharedPreferences preferences;
+	public DatabaseManager databaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        preferences = getSharedPreferences(Constant.PREFERENCE_SHEET, MODE_PRIVATE);
+        databaseManager = new DatabaseManager(getBaseContext());
+        
+        if(!preferences.getBoolean(Constant.FIRST_TIME_SETUP, false))
+        {
+        	Editor editor = preferences.edit();
+        	editor.putBoolean(Constant.FIRST_TIME_SETUP, true);
+        	if(editor.commit())
+        	{        		
+        		databaseManager.createDatabase();
+        	}
+        }                              
+        
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new Login())

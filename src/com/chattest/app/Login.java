@@ -1,7 +1,10 @@
 package com.chattest.app;
 
 import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.Date;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Fragment;
@@ -13,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.chattest.app.controller.DatabaseManager;
+import com.chattest.app.controller.SocketController;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -25,15 +30,10 @@ public class Login extends Fragment {
 	private EditText name;
 
 	private Button btn_join;
-
-	private Socket socket;
-	{
-		try {
-			socket = IO.socket("http://sucket.herokuapp.com/");
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	
+	private SocketController socketController;
+	
+	private MainActivity main;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,36 +43,31 @@ public class Login extends Fragment {
 
 		name = (EditText) view.findViewById(R.id.name);
 		btn_join = (Button) view.findViewById(R.id.btnJoin);
+		
+		main = (MainActivity)getActivity();
 
-		getActivity().getActionBar().hide();
+		main.getActionBar().hide();
 
 		setHasOptionsMenu(false);
 		
-		socket.on("old_messages", onOldMessages);
-		socket.connect();
-		socket.emit("setNickname", "Icaro");
-		
+		socketController = new SocketController(getActivity());
 
 		btn_join.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) {									
+				
+				try {
+					main.databaseManager.retrieveMessages(0);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
 		});
 
 		return view;
-	}
-	
-	public Emitter.Listener onOldMessages = new Emitter.Listener() {
-		
-		@Override
-		public void call(Object... messages) {
-			
-			JSONObject data = (JSONObject)messages[0];
-			
-			Log.d("Login", data.toString());
-		}
-	};
+	}	
 
 }
