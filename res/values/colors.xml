@@ -14,5 +14,6 @@
     <color name="bg_btn_join">#333</color>
     <color name="bg_msg_input">#e8e8e8</color>
     <color name="text_msg_input">#626262</color>
-    <color name="lblFromName">#777777</color>
+    <color name="name_label">#333</color>
+    <color name="misc_message">#777777</color>
 </resources>

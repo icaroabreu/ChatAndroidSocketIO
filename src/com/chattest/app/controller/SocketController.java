@@ -6,11 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.Activity;
 import android.util.Log;
 
+import com.chattest.app.ChatRoom;
+import com.chattest.app.MainActivity;
 import com.chattest.app.model.Message;
 import com.chattest.app.utility.Constant;
 import com.github.nkzawa.emitter.Emitter;
@@ -19,13 +19,17 @@ import com.github.nkzawa.socketio.client.Socket;
 
 public class SocketController {
 	
-	private Socket socket;	
+	private Socket socket;
 	
-	private Context context;
+	private MainActivity activity;
 	
-	public SocketController(Context context) {
+	private boolean isConnected;
+	
+	public SocketController(Activity activity) {
 		
-		this.context = context;		
+		this.activity = (MainActivity)activity;	
+		
+		this.isConnected = false;
 		
 		try {
 			socket = IO.socket(Constant.WEBSOCKET_SERVER_URL);						
@@ -52,7 +56,7 @@ public class SocketController {
 			
 			JSONObject data = (JSONObject)messages[0];
 			
-			DatabaseManager manager = new DatabaseManager(context);
+			DatabaseManager manager = new DatabaseManager(activity);
 			
 			try {
 				JSONArray old_messages = data.getJSONArray("messages");
@@ -62,8 +66,10 @@ public class SocketController {
 				for(int i = 0; i < old_messages.length(); i++)
 				{
 					Message message = new Message();
+					message.setId(old_messages.getJSONObject(i).getInt("_id"));
 					message.setAuthor(old_messages.getJSONObject(i).getString("name"));
 					message.setMessage(old_messages.getJSONObject(i).getString("message"));
+					message.setDate(old_messages.getJSONObject(i).getLong("date"));					
 					
 					if(manager.insertMessage(message) != 0)
 					{
@@ -91,7 +97,9 @@ public class SocketController {
 			
 			JSONObject data = (JSONObject)args[0];
 			
+			Log.d("Socket", args[0].toString());
 			
+			activity.showFragment(MainActivity.CHATSCREEN);
 			
 		}
 	};
@@ -101,7 +109,9 @@ public class SocketController {
 		@Override
 		public void call(Object... args) {
 			
-			JSONObject data = (JSONObject)args[0];
+			//JSONObject data = (JSONObject)args[0];
+			
+			Log.d("Socket", args[0].toString());
 			
 			
 			
@@ -117,12 +127,24 @@ public class SocketController {
 			
 			Message message = new Message();
 			
+			DatabaseManager manager = new DatabaseManager(activity);
+			
+			Log.d("SocketController", data.toString());
+			
 			try {
 								
+				message.setId(data.getInt("_id"));
 				message.setAuthor(data.getString("name"));
-				message.setMessage(data.getString("message"));			
+				message.setMessage(data.getString("message"));
+				message.setDate(data.getLong("date"));				
 				
-				Log.d("SocketController", message.getAuthor() + " sent: "+message.getMessage());
+				if(manager.insertMessage(message) != 0)
+				{
+					ChatRoom room = (ChatRoom)activity.screens[MainActivity.CHATSCREEN];
+					room.appendMessage();
+				}
+				
+				Log.d("SocketController", message.toString());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -160,11 +182,22 @@ public class SocketController {
 		@Override
 		public void call(Object... args) {	
 			
-			//socket.emit("setNickname", "Icaro");
-			
+			isConnected = true;					
 			Log.d("Socket", "Conneted");
 			
 		}
 	};
+	
+	public void emit(String tag, String message)
+	{
+		Log.d("Socket", "emitiu: tag: " + tag + " message: " + message);
+		
+		socket.emit(tag, message);
+	}
+
+	public boolean isConnected() {		
+		
+		return isConnected;
+	}	
 
 }

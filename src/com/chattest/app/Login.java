@@ -1,11 +1,6 @@
 package com.chattest.app;
 
-import java.net.URISyntaxException;
-import java.util.Calendar;
-import java.util.Date;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.chattest.app.utility.Constant;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -16,12 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.chattest.app.controller.DatabaseManager;
-import com.chattest.app.controller.SocketController;
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-
 @SuppressWarnings("deprecation")
 public class Login extends Fragment {
 
@@ -29,9 +18,7 @@ public class Login extends Fragment {
 
 	private EditText name;
 
-	private Button btn_join;
-	
-	private SocketController socketController;
+	private Button btn_join;	
 	
 	private MainActivity main;
 
@@ -48,26 +35,20 @@ public class Login extends Fragment {
 
 		main.getActionBar().hide();
 
-		setHasOptionsMenu(false);
-		
-		socketController = new SocketController(getActivity());
+		setHasOptionsMenu(false);			
 
 		btn_join.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View v) {									
+		public void onClick(View v) {																				
 				
-				try {
-					main.databaseManager.retrieveMessages(0);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				main.getSocketController().emit("setNickname", name.getText().toString());
+				
+				main.getPreferences().edit().putString(Constant.USER_NAME, name.getText().toString()).commit();
 			}
 		});
 
 		return view;
-	}	
+	}
 
 }

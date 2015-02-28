@@ -4,5 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.chattest.app.MainActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:ignore="MergeRootFrame" >
+
+    <fragment
+        android:id="@+id/login_screen"
+        android:name="com.chattest.app.Login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <fragment
+        android:id="@+id/chat_screen"
+        android:name="com.chattest.app.ChatRoom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>
 
