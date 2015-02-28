@@ -7,29 +7,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.chattest.app.model.Message;
 import com.chattest.app.utility.Constant;
 
 public class DatabaseManager {
 	
-	private Context context;
-	
 	private DatabaseHelper databaseHelper;
 	
 	private SQLiteDatabase database;
 	
-	private static ArrayList<Message> Message_List = new ArrayList<Message>();
+	private static List<Message> Message_List = new ArrayList<Message>();
 
-	public DatabaseManager(Context context) {		
-		this.context = context;
+	public DatabaseManager(Context context) {			
 		
 		databaseHelper = new DatabaseHelper(context);
-	}
-	
-	public void createDatabase()
-	{
-		//databaseHelper.onCreate(database);
 	}
 	
 	public long insertMessage(Message message)
@@ -47,13 +40,15 @@ public class DatabaseManager {
 		return database.insert(Constant.TABLE_NAME, "NULL", values);
 	}
 	
-	public void retrieveMessages(int last_id)
+	public void retrieveMessages(int fist_id)
 	{
-		database = databaseHelper.getReadableDatabase();
+		database = databaseHelper.getReadableDatabase();		
 		
-//		JSONArray results = new JSONArray();
+		String query = "SELECT * FROM " + Constant.TABLE_NAME + " WHERE " + Constant.COLUMN__ID + " > " + fist_id + " LIMIT " + Constant.MESSAGE_LIMIT;
 		
-		Cursor cursor = database.rawQuery("SELECT * FROM " + Constant.TABLE_NAME + " WHERE '" + Constant.COLUMN__ID + "' > " + last_id + " LIMIT " + Constant.MESSAGE_LIMIT, null);			
+		Log.d("Database" , query);
+		
+		Cursor cursor = database.rawQuery(query, null);			
 		
 		if (cursor.moveToFirst()) {
 
@@ -74,6 +69,7 @@ public class DatabaseManager {
 //					row.put("date", message.getDate());					
 									
 					Message_List.add(message);
+					Log.d("DataBase", message.toString());
 //					results.put(row);
         	            
                 
@@ -83,16 +79,35 @@ public class DatabaseManager {
 		
 		//return new JSONObject().put("messages", results);
 	}
-
-	public static List<Message> getMessage_List(boolean full) {
+	
+	public int databaseSize()
+	{
+		database = databaseHelper.getReadableDatabase();		
 		
-		if(full)		
-			return Message_List;
-		else 
-		{
-			int last_id = (Message_List.size() > 30) ? 29 : (Message_List.size() - 1);			
-			return Message_List.subList(0, last_id);
-		}
+		Cursor cursor = database.rawQuery("SELECT * FROM " + Constant.TABLE_NAME , null);
+		
+		Log.d("Database", "Database SIZE: "+cursor.getCount());
+		
+		return cursor.getCount();
+	}
+	
+	public int lastId()
+	{
+		database = databaseHelper.getReadableDatabase();		
+		
+		Log.d("Database", "entrou no lastId'");
+		
+		Cursor cursor = database.rawQuery("SELECT MAX(" + Constant.COLUMN__ID + ") AS LASTID FROM " + Constant.TABLE_NAME  , null);
+		cursor.moveToFirst();
+		
+		Log.d("Database", "last id: "+cursor.getInt(cursor.getColumnIndex("LASTID")));
+		
+		return cursor.getInt(cursor.getColumnIndex("LASTID"));
+	}
+
+	public static List<Message> getMessage_List() {
+		
+		return Message_List;		
 	}
 	
 	

@@ -2,6 +2,7 @@ package com.chattest.app;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,22 +29,40 @@ public class ChatRoom extends Fragment {
 		
 		activity = (MainActivity)getActivity();
 		
-		list_messages = (ListView)view.findViewById(R.id.list_messages);
-				
-		DatabaseManager manager = new DatabaseManager(getActivity());
+		list_messages = (ListView)view.findViewById(R.id.list_messages);					
 		
-		manager.retrieveMessages(0);
-		
-		adapter = new MessageAdapter(activity, DatabaseManager.getMessage_List(false));
+		adapter = new MessageAdapter(activity, DatabaseManager.getMessage_List());
 		
 		list_messages.setAdapter(adapter);
+		
+		DatabaseManager manager = new DatabaseManager(getActivity());
+		
+		int databaseSize = manager.databaseSize(); 
+		
+		if(databaseSize < 30)
+			manager.retrieveMessages(0);
+		else
+		{
+			manager.retrieveMessages(manager.lastId() - 31);
+		}
+		
+		appendMessage();
 		
 		return view;
 	}
 	
 	public void appendMessage()
-	{						
-		adapter.notifyDataSetChanged();				
+	{		
+		Log.d("List Size", "Size: "+DatabaseManager.getMessage_List().size());
+		
+		activity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() 
+			{			
+				adapter.notifyDataSetChanged();
+			}
+		});				
 	}
 	
 }
