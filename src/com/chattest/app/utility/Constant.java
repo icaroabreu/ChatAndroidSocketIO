@@ -11,17 +11,24 @@ public class Constant {
 	
 	/* Server URL */
 	
-	public static final String WEBSOCKET_SERVER_URL = "https://sucket.herokuapp.com/";
+	public static final String WEBSOCKET_SERVER_URL = "http://192.168.0.28:5000";//"https://sucket.herokuapp.com/";
+	
+	/* Message Types */
+	
+	public static final String MESSAGE_TYPE_MESSAGE = "message";
+	public static final String MESSAGE_TYPE_USER_JOINED = "user_joined";
+	public static final String MESSAGE_TYPE_USER_LEFT = "user_left"; 	
 	
 	/* Database */	
 	
 	public static final String DATABASE_NAME = "Chat.db";
 	public static final int DATABASE_VERSION = 1;
 	
-	public static final String TABLE_NAME = "messages";
+	public static final String TABLE_NAME = "messages";	
     public static final String COLUMN__ID = "_id";
     public static final String COLUMN_AUTHOR = "author";
     public static final String COLUMN_MESSAGE = "message";
+    public static final String COLUMN_FLAG = "flag";
     public static final String COLUMN_DATE = "date";    
     
     public static final String MESSAGE_LIMIT = "30";
@@ -29,10 +36,16 @@ public class Constant {
     /* queries */
     
     public static final String SQL_CREATE_TABLE_QUERY = "CREATE TABLE " + 
-    		TABLE_NAME + "(" + COLUMN__ID + " INTEGER PRIMARY KEY NOT NULL," + 
+    		TABLE_NAME + "(" + 
+    		COLUMN__ID + " INTEGER PRIMARY KEY NOT NULL," +
     		COLUMN_AUTHOR + " CHAR(50) NOT NULL," +
+    		COLUMN_FLAG + " CHAR(50) NOT NULL," +
     		COLUMN_MESSAGE + " TEXT NOT NULL, " +
-    		COLUMN_DATE + " CHAR(45)" +
-    		" );";
+    		COLUMN_DATE + " CHAR(45) " +
+    		");";
+    
+    /* Misc */
+    
+    public static final String SEPARATOR = "¬SEPARATOR¬";
 
 }

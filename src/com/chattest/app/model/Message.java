@@ -1,5 +1,7 @@
 package com.chattest.app.model;
 
+import android.app.Activity;
+
 import com.chattest.app.MainActivity;
 import com.chattest.app.utility.Constant;
 
@@ -9,20 +11,19 @@ public class Message {
 	private String message;
 	private int id;
 	private long date;
-	private boolean myMessage;
+	private String flag;
 	
 	public Message() {
 		super();
 	}
 
-	public Message(String author, String message, int id, long date,
-			boolean myMessage) {
+	public Message(String author, String message, int id, long date, String flag) {
 		super();
 		this.author = author;
 		this.message = message;
 		this.id = id;
 		this.date = date;
-		this.myMessage = myMessage;
+		this.flag = flag;
 	}
 
 	public String getAuthor() {
@@ -57,8 +58,16 @@ public class Message {
 		this.date = date;
 	}
 
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+	
 	public boolean isMyMessage(MainActivity activity) {
-		if(activity.getSharedPreferences(Constant.PREFERENCE_SHEET,activity.MODE_PRIVATE).getString(Constant.USER_NAME, "").equals(author))
+		if(activity.getSharedPreferences(Constant.PREFERENCE_SHEET,Activity.MODE_PRIVATE).getString(Constant.USER_NAME, "").equals(author))
 		{
 			return true;
 		}
@@ -71,7 +80,7 @@ public class Message {
 	@Override
 	public String toString() {
 		return "Message [author=" + author + ", message=" + message + ", id="
-				+ id + ", date=" + date + ", myMessage=" + myMessage + "]";
-	}
+				+ id + ", date=" + date + ", flag=" + flag + "]";
+	}	
 	
 }

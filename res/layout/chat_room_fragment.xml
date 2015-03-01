@@ -1,17 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/list_messages"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@null"
         android:divider="@null"
         android:transcriptMode="alwaysScroll"
         android:stackFromBottom="true">
     </ListView>
+    
+    <LinearLayout
+        android:id="@+id/msg_composer_holder"
+        android:layout_width="fill_parent"
+        android:background="@color/bg_msg_input"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4" >
+ 
+        <EditText
+            android:id="@+id/msg_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"            
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:maxLines="4"
+            android:layout_gravity="bottom"/>
+ 
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="4dp"
+            android:text="@string/btn_send"/>
+    </LinearLayout>"
 
 </LinearLayout>

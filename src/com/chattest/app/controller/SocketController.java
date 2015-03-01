@@ -14,6 +14,7 @@ import com.chattest.app.MainActivity;
 import com.chattest.app.model.Message;
 import com.chattest.app.utility.Constant;
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Ack;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -35,7 +36,7 @@ public class SocketController {
 			socket = IO.socket(Constant.WEBSOCKET_SERVER_URL);						
 			
 			socket.on("old_messages", onOldMessages);
-			socket.on("message", onMessage);
+			socket.on("message", onMessage);		
 			socket.on("user_joined", onUserJoined);
 			socket.on("user_left", onUserLeft);
 			socket.on("typing", onTyping);
@@ -69,7 +70,8 @@ public class SocketController {
 					message.setId(old_messages.getJSONObject(i).getInt("_id"));
 					message.setAuthor(old_messages.getJSONObject(i).getString("name"));
 					message.setMessage(old_messages.getJSONObject(i).getString("message"));
-					message.setDate(old_messages.getJSONObject(i).getLong("date"));					
+					message.setDate(old_messages.getJSONObject(i).getLong("date"));
+					message.setFlag(old_messages.getJSONObject(i).getString("flag"));
 					
 					if(manager.insertMessage(message) != 0)
 					{
@@ -95,7 +97,35 @@ public class SocketController {
 		@Override
 		public void call(Object... args) {
 			
-			JSONObject data = (JSONObject)args[0];
+			JSONObject user_data = (JSONObject)args[0];
+			
+			Message message = new Message();
+			
+			DatabaseManager manager = new DatabaseManager(activity);
+			
+			Log.d("SocketController", user_data.toString());
+			
+			try {
+				
+				JSONObject data = (JSONObject)user_data.getJSONObject("data");						
+								
+				message.setId(data.getInt("_id"));
+				message.setAuthor(data.getString("name"));
+				message.setMessage(data.getString("message"));
+				message.setDate(data.getLong("date"));	
+				message.setFlag(data.getString("flag"));
+				
+//				if(manager.insertMessage(message) != 0)
+//				{
+//					ChatRoom room = (ChatRoom)activity.screens[MainActivity.CHATSCREEN];
+//					room.appendMessage();
+//				}
+				
+				Log.d("SocketController", message.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
 			
 			Log.d("Socket", args[0].toString());
 			
@@ -109,11 +139,37 @@ public class SocketController {
 		@Override
 		public void call(Object... args) {
 			
-			//JSONObject data = (JSONObject)args[0];
+			JSONObject user_data = (JSONObject)args[0];
 			
 			Log.d("Socket", args[0].toString());
 			
+			Message message = new Message();
 			
+			DatabaseManager manager = new DatabaseManager(activity);
+			
+			Log.d("SocketController", user_data.toString());
+			
+			try {
+				
+				JSONObject data = (JSONObject)user_data.getJSONObject("data");
+								
+				message.setId(data.getInt("_id"));
+				message.setAuthor(data.getString("name"));
+				message.setMessage(data.getString("message"));
+				message.setDate(data.getLong("date"));	
+				message.setFlag(data.getString("flag"));
+				
+//				if(manager.insertMessage(message) != 0)
+//				{
+//					ChatRoom room = (ChatRoom)activity.screens[MainActivity.CHATSCREEN];
+//					room.appendMessage();
+//				}
+				
+				Log.d("SocketController", message.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
 			
 		}
 	};
@@ -136,7 +192,8 @@ public class SocketController {
 				message.setId(data.getInt("_id"));
 				message.setAuthor(data.getString("name"));
 				message.setMessage(data.getString("message"));
-				message.setDate(data.getLong("date"));				
+				message.setDate(data.getLong("date"));	
+				message.setFlag(data.getString("flag"));
 				
 				if(manager.insertMessage(message) != 0)
 				{
@@ -188,16 +245,42 @@ public class SocketController {
 		}
 	};
 	
+	public void sendAttempt(String message)
+	{
+		Log.d("Socket", "attempt to send: "+message);
+		
+		socket.emit("message", message, new Ack() {
+			
+			@Override
+			public void call(Object... arg0) {
+				
+				Log.d("Socket", "Message has arrived in the server: "+arg0.toString());
+				
+			}
+		});
+	}
+	
 	public void emit(String tag, String message)
 	{
 		Log.d("Socket", "emitiu: tag: " + tag + " message: " + message);
 		
 		socket.emit(tag, message);
 	}
+	
+	public void emit(String tag)
+	{
+		Log.d("Socket", "emitiu: tag: ");
+		
+		socket.emit(tag);
+	}
 
 	public boolean isConnected() {		
 		
 		return isConnected;
+	}
+
+	public Socket getSocket() {
+		return socket;
 	}	
 
 }

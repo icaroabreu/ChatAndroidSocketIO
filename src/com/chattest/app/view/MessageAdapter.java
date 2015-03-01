@@ -5,16 +5,17 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.chattest.app.MainActivity;
 import com.chattest.app.R;
 import com.chattest.app.model.Message;
+import com.chattest.app.utility.Constant;
 
 public class MessageAdapter extends BaseAdapter {
 
@@ -47,27 +48,54 @@ public class MessageAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		Message message = messageItems.get(position);
+		Message message = messageItems.get(position);			
 
 		LayoutInflater inflater = (LayoutInflater) activity
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);					
 		
-		if(message.isMyMessage(activity))
+		if(message.getFlag().equals(Constant.MESSAGE_TYPE_MESSAGE))
 		{
-			convertView = inflater.inflate(R.layout.message_item_right, null);
+			if(message.isMyMessage(activity))
+			{
+				convertView = inflater.inflate(R.layout.message_item_right, null);
+			}
+			else
+			{
+				convertView = inflater.inflate(R.layout.message_item_left, null);
+			}
+			
+			TextView authors_name = (TextView)convertView.findViewById(R.id.message_author);
+			TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
+			TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
+			
+			authors_name.setText(message.getAuthor());
+			message_text.setText(message.getMessage());
+			message_date.setText(new SimpleDateFormat("hh:mm dd/MM/yyyy").format(new Date(message.getDate())));
 		}
-		else
+		else if (message.getFlag().equals(Constant.MESSAGE_TYPE_USER_JOINED))
 		{
 			convertView = inflater.inflate(R.layout.message_item_left, null);
+			
+			TextView authors_name = (TextView)convertView.findViewById(R.id.message_author);
+			TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
+			TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
+			
+			authors_name.setText(message.getAuthor());
+			message_text.setText("Joined");
+			message_date.setAlpha(0f);
 		}
-		
-		TextView authors_name = (TextView)convertView.findViewById(R.id.message_author);
-		TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
-		TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
-		
-		authors_name.setText(message.getAuthor());
-		message_text.setText(message.getMessage());
-		message_date.setText(new SimpleDateFormat("dd/mm/yyyy").format(new Date(message.getDate())));
+		else if (message.getFlag().equals(Constant.MESSAGE_TYPE_USER_LEFT))
+		{
+			convertView = inflater.inflate(R.layout.message_item_left, null);
+			
+			TextView authors_name = (TextView)convertView.findViewById(R.id.message_author);
+			TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
+			TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
+			
+			authors_name.setText(message.getAuthor());
+			message_text.setText("Left");
+			message_date.setAlpha(0f);
+		}		
 
 		return convertView;
 	}

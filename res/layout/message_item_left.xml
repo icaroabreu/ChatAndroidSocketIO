@@ -5,7 +5,8 @@
     android:orientation="vertical" 
     android:paddingBottom="5dp"
     android:paddingTop="5dp"
-    android:paddingLeft="10dp">
+    android:paddingLeft="10dp"
+    android:clickable="false">
 
  
     
