@@ -188,15 +188,16 @@ public class SocketController {
 			Log.d("SocketController", data.toString());
 			
 			try {
-								
-				message.setId(data.getInt("_id"));
+												
 				message.setAuthor(data.getString("name"));
 				message.setMessage(data.getString("message"));
 				message.setDate(data.getLong("date"));	
 				message.setFlag(data.getString("flag"));
 				
-				if(manager.insertMessage(message) != 0)
-				{
+				message.setId((int)manager.insertMessage(message));
+				
+				if(message.getId() != -1)
+				{				
 					ChatRoom room = (ChatRoom)activity.screens[MainActivity.CHATSCREEN];
 					room.appendMessage();
 				}
@@ -245,16 +246,23 @@ public class SocketController {
 		}
 	};
 	
-	public void sendAttempt(String message)
+	public void sendAttempt(String message, final ChatRoom manager)
 	{
 		Log.d("Socket", "attempt to send: "+message);
 		
 		socket.emit("message", message, new Ack() {
 			
 			@Override
-			public void call(Object... arg0) {
+			public void call(Object... message) {							
 				
-				Log.d("Socket", "Message has arrived in the server: "+arg0.toString());
+				try {
+					manager.updateMessage(new JSONObject(message[0].toString()).getInt("message_id"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				Log.d("Socket", "Message has arrived in the server: "+message[0]);
 				
 			}
 		});

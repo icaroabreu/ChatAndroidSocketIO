@@ -4,26 +4,32 @@ import android.app.Activity;
 
 import com.chattest.app.MainActivity;
 import com.chattest.app.utility.Constant;
+import com.github.nkzawa.socketio.client.Ack;
 
 public class Message {
 	
 	private String author;
 	private String message;
 	private int id;
+	private int state;
 	private long date;
 	private String flag;
+	private boolean sendAttemptFailed;
 	
 	public Message() {
 		super();
 	}
 
-	public Message(String author, String message, int id, long date, String flag) {
+	public Message(String author, String message, int id, int state, long date,
+			String flag) {
 		super();
 		this.author = author;
 		this.message = message;
 		this.id = id;
+		this.state = state;
 		this.date = date;
 		this.flag = flag;
+		this.sendAttemptFailed = false;
 	}
 
 	public String getAuthor() {
@@ -50,6 +56,14 @@ public class Message {
 		this.id = id;
 	}
 
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
 	public long getDate() {
 		return date;
 	}
@@ -65,7 +79,7 @@ public class Message {
 	public void setFlag(String flag) {
 		this.flag = flag;
 	}
-	
+
 	public boolean isMyMessage(MainActivity activity) {
 		if(activity.getSharedPreferences(Constant.PREFERENCE_SHEET,Activity.MODE_PRIVATE).getString(Constant.USER_NAME, "").equals(author))
 		{
@@ -80,7 +94,16 @@ public class Message {
 	@Override
 	public String toString() {
 		return "Message [author=" + author + ", message=" + message + ", id="
-				+ id + ", date=" + date + ", flag=" + flag + "]";
+				+ id + ", state=" + state + ", date=" + date + ", flag=" + flag
+				+ "]";
+	}
+
+	public boolean isSendAttemptFailed() {
+		return sendAttemptFailed;
+	}
+
+	public void setSendAttemptFailed(boolean sendAttemptFailed) {
+		this.sendAttemptFailed = sendAttemptFailed;
 	}	
-	
+
 }

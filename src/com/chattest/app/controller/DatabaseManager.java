@@ -1,6 +1,9 @@
 package com.chattest.app.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -26,26 +29,75 @@ public class DatabaseManager {
 	}
 
 	public long insertMessage(Message message)
-	{
-		Message_List.add(message);
-
+	{		
 		database = databaseHelper.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(Constant.COLUMN__ID, message.getId());
+		//values.put(Constant.COLUMN__ID, message.getId());
 		values.put(Constant.COLUMN_AUTHOR, message.getAuthor());
 		values.put(Constant.COLUMN_MESSAGE, message.getMessage());
 		values.put(Constant.COLUMN_DATE, message.getDate());
+		values.put(Constant.COLUMN_STATE, message.getState());
 		values.put(Constant.COLUMN_FLAG, message.getFlag());
+		
+		long new_message_id = database.insert(Constant.TABLE_NAME, "NULL", values);
+				
+		message.setId((int)new_message_id);
+		
+		Message_List.add(message);
 
-		return database.insert(Constant.TABLE_NAME, "NULL", values);
+		return new_message_id;
 	}
 
 	public void retrieveMessages(int fist_id)
 	{
 		database = databaseHelper.getReadableDatabase();		
 
-		String query = "SELECT * FROM " + Constant.TABLE_NAME + " WHERE " + Constant.COLUMN__ID + " > " + fist_id + " LIMIT " + Constant.MESSAGE_LIMIT;
+		String query = "SELECT * FROM " + Constant.TABLE_NAME + " WHERE " + Constant.COLUMN__ID + 
+				" > " + fist_id + " LIMIT " + Constant.MESSAGE_LIMIT;
+
+		Log.d("Database" , query);
+
+		Cursor cursor = database.rawQuery(query, null);			
+
+		if (cursor.moveToFirst()) {
+
+			while (cursor.isAfterLast() == false) {
+				
+				Log.d("Database Manager", "Message Id: "+cursor.getInt(cursor.getColumnIndex(Constant.COLUMN__ID)));
+
+				Message message = new Message();
+				message.setId(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN__ID)));
+				message.setAuthor(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_AUTHOR)));
+				message.setDate(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_DATE))));
+				message.setMessage(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_MESSAGE)));
+				message.setFlag(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_FLAG))); 
+				message.setState(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_STATE)));          							
+
+				Message_List.add(message);  
+				
+//				Collections.sort(Message_List, new Comparator<Message>() {
+//
+//					@Override
+//					public int compare(Message message1, Message message2) {											
+//						
+//						return Long.compare(message1.getDate(), message2.getDate());
+//					}
+//					
+//				});
+
+				cursor.moveToNext();
+			}
+		}			
+	
+	}
+	
+	public void retrieveOldMessages(int fist_id)
+	{
+		database = databaseHelper.getReadableDatabase();		
+
+		String query = "SELECT * FROM " + Constant.TABLE_NAME + " WHERE " + Constant.COLUMN__ID + 
+				" > " + fist_id + " LIMIT " + Constant.MESSAGE_LIMIT;
 
 		Log.d("Database" , query);
 
@@ -67,8 +119,18 @@ public class DatabaseManager {
 				cursor.moveToNext();
 			}
 		}			
-
-		//return new JSONObject().put("messages", results);
+	
+	}
+	
+	public int changeMessageState(int message_id, int message_state)
+	{
+		database = databaseHelper.getWritableDatabase();		
+		
+		ContentValues values = new ContentValues();
+		
+		values.put(Constant.COLUMN_STATE, message_state);
+		
+		return database.update(Constant.TABLE_NAME, values, Constant.COLUMN__ID + " = " + message_id, null);
 	}
 
 	public int databaseSize()
@@ -88,7 +150,9 @@ public class DatabaseManager {
 
 		Log.d("Database", "entrou no lastId'");
 
-		Cursor cursor = database.rawQuery("SELECT MAX(" + Constant.COLUMN__ID + ") AS LASTID FROM " + Constant.TABLE_NAME  , null);
+		Cursor cursor = database.rawQuery("SELECT MAX(" + Constant.COLUMN__ID + 
+				") AS LASTID FROM " + Constant.TABLE_NAME  , null);
+		
 		cursor.moveToFirst();
 
 		Log.d("Database", "last id: "+cursor.getInt(cursor.getColumnIndex("LASTID")));

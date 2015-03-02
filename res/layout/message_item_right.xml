@@ -2,44 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:paddingBottom="5dp"
-    android:paddingTop="5dp"
+    android:clickable="false"
     android:gravity="right"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
     android:paddingLeft="10dp"
-    android:clickable="false">
+    android:paddingTop="5dp" >
 
-     <TextView
-	        android:id="@+id/message_author"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="12dp"
-	        android:textColor="@color/name_label"
-	        android:padding="5dp"
-	        android:text="TextView" />
-    
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/message_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:layout_marginLeft="80dp"
-        android:textColor="@color/title_gray"
+        android:padding="5dp"
+        android:text="TextView"
+        android:textColor="@color/name_label"
+        android:textSize="12dp" />
+
+    <LinearLayout
+        android:id="@+id/message_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginLeft="80dp"            
+        android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:background="@drawable/bg_message_you"
-        android:text="TextView" />
-    
-    <TextView
-            android:id="@+id/message_date"
+        android:background="@drawable/bg_message_you">
+
+        <TextView
+            android:id="@+id/message_text"
             android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="10dp"
-	        android:textColor="@color/misc_message"
-	        android:padding="5dp"
-			android:textStyle="italic"
-	        android:text="TextView" />
+            android:layout_height="wrap_content"            
+            android:text="TextView"
+            android:textColor="@color/title_gray"
+            android:textSize="16dp" />       
+        
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/message_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="TextView"
+        android:textColor="@color/misc_message"
+        android:textSize="10dp"
+        android:textStyle="italic" />
 
 </LinearLayout>

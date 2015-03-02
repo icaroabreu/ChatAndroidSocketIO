@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chattest.app.MainActivity;
@@ -58,6 +59,16 @@ public class MessageAdapter extends BaseAdapter {
 			if(message.isMyMessage(activity))
 			{
 				convertView = inflater.inflate(R.layout.message_item_right, null);
+				LinearLayout message_holder = (LinearLayout)convertView.findViewById(R.id.message_holder);
+				
+				if(message.getState() == Constant.MESSAGE_HAS_NOT_ARRIVED_IN_SERVER)
+				{
+					message_holder.setAlpha(.6f);
+				}
+				else if(message.getState() == Constant.MESSAGE_ARRIVED_IN_SERVER)
+				{
+					message_holder.setAlpha(1f);
+				}
 			}
 			else
 			{
