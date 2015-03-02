@@ -11,7 +11,8 @@ public class Constant {
 	
 	/* Server URL */
 	
-	public static final String WEBSOCKET_SERVER_URL = "http://192.168.1.114:5000";//"https://sucket.herokuapp.com/";
+	public static final String WEBSOCKET_SERVER_URL = "https://sucket.herokuapp.com/";
+	//public static final String WEBSOCKET_SERVER_URL = "http://192.168.1.114:5000";
 	
 	/* Message Types */
 	
@@ -31,6 +32,7 @@ public class Constant {
 	
 	public static final String TABLE_NAME = "messages";	
     public static final String COLUMN__ID = "_id";
+    public static final String COLUMN_MESSAGE_ID = "message_id";
     public static final String COLUMN_AUTHOR = "author";
     public static final String COLUMN_MESSAGE = "message";
     public static final String COLUMN_FLAG = "flag";
@@ -44,6 +46,7 @@ public class Constant {
     public static final String SQL_CREATE_TABLE_QUERY = "CREATE TABLE " + 
     		TABLE_NAME + "(" + 
     		COLUMN__ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+    		COLUMN_MESSAGE_ID + " INTEGER," +
     		COLUMN_STATE + " INTEGER NOT NULL," +
     		COLUMN_AUTHOR + " CHAR(50) NOT NULL," +
     		COLUMN_FLAG + " CHAR(50) NOT NULL," +

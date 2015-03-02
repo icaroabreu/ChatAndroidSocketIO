@@ -37,17 +37,13 @@ public class ChatRoom extends Fragment {
 	
 	private Button btn_send;
 	
-	private boolean imTyping;
-	
-	private ChatRoom chat_manager;
+	private boolean imTyping;		
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		view = inflater.inflate(R.layout.chat_room_fragment, container);
-		
-		chat_manager = this;
+		view = inflater.inflate(R.layout.chat_room_fragment, container);		
 		
 		activity = (MainActivity)getActivity();			
 		
@@ -93,7 +89,7 @@ public class ChatRoom extends Fragment {
 						
 						if(activity.databaseManager.insertMessage(new_message) != -1)
 						{
-							activity.getSocketController().sendAttempt(new_message.getMessage()+Constant.SEPARATOR+new_message.getId()+Constant.SEPARATOR+new Date().getTime(), chat_manager);
+							activity.getSocketController().sendAttempt(new_message);
 							msg_input.setText("");
 							appendMessage();
 						}
@@ -141,7 +137,12 @@ public class ChatRoom extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				
-				
+				if(DatabaseManager.getMessage_List().get(position).getState() != Constant.MESSAGE_ARRIVED_IN_SERVER)
+				{
+					Message new_message = DatabaseManager.getMessage_List().get(position);								
+					
+					activity.getSocketController().sendAttempt(new_message);
+				}
 				
 			}
 			
@@ -177,7 +178,7 @@ public class ChatRoom extends Fragment {
 		}
 	}
 	
-	public void updateMessage(final int message_id)
+	public void updateMessage(final int message_id, final int message_id_server)
 	{		
 	
 		for(int i = 0; i < DatabaseManager.getMessage_List().size(); i++)
@@ -195,7 +196,7 @@ public class ChatRoom extends Fragment {
 					@Override
 					public void run() {
 						
-						if(activity.databaseManager.changeMessageState(message_id, Constant.MESSAGE_ARRIVED_IN_SERVER) > 0)
+						if(activity.databaseManager.changeMessageState(message_id, message_id_server, Constant.MESSAGE_ARRIVED_IN_SERVER) > 0)
 						{
 							Log.d("Message", "Updated: " + index);
 							//LinearLayout message_holder = (LinearLayout)messagem_item.findViewById(R.id.message_holder);

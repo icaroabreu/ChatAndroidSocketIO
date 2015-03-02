@@ -11,6 +11,7 @@ public class Message {
 	private String author;
 	private String message;
 	private int id;
+	private int message_id;
 	private int state;
 	private long date;
 	private String flag;
@@ -21,11 +22,12 @@ public class Message {
 	}
 
 	public Message(String author, String message, int id, int state, long date,
-			String flag) {
+			String flag,int message_id) {
 		super();
 		this.author = author;
 		this.message = message;
 		this.id = id;
+		this.message_id = message_id;
 		this.state = state;
 		this.date = date;
 		this.flag = flag;
@@ -54,6 +56,14 @@ public class Message {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public int getMessageId() {
+		return message_id;
+	}
+
+	public void setMessageId(int message_id) {
+		this.message_id = message_id;
 	}
 
 	public int getState() {

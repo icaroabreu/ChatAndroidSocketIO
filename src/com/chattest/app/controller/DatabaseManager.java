@@ -62,9 +62,7 @@ public class DatabaseManager {
 
 		if (cursor.moveToFirst()) {
 
-			while (cursor.isAfterLast() == false) {
-				
-				Log.d("Database Manager", "Message Id: "+cursor.getInt(cursor.getColumnIndex(Constant.COLUMN__ID)));
+			while (cursor.isAfterLast() == false) {				
 
 				Message message = new Message();
 				message.setId(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN__ID)));
@@ -122,13 +120,14 @@ public class DatabaseManager {
 	
 	}
 	
-	public int changeMessageState(int message_id, int message_state)
+	public int changeMessageState(int message_id, int message_id_server, int message_state)
 	{
 		database = databaseHelper.getWritableDatabase();		
 		
 		ContentValues values = new ContentValues();
 		
 		values.put(Constant.COLUMN_STATE, message_state);
+		values.put(Constant.COLUMN_MESSAGE_ID, message_id_server);
 		
 		return database.update(Constant.TABLE_NAME, values, Constant.COLUMN__ID + " = " + message_id, null);
 	}
@@ -148,7 +147,6 @@ public class DatabaseManager {
 	{
 		database = databaseHelper.getReadableDatabase();		
 
-		Log.d("Database", "entrou no lastId'");
 
 		Cursor cursor = database.rawQuery("SELECT MAX(" + Constant.COLUMN__ID + 
 				") AS LASTID FROM " + Constant.TABLE_NAME  , null);
@@ -158,6 +156,20 @@ public class DatabaseManager {
 		Log.d("Database", "last id: "+cursor.getInt(cursor.getColumnIndex("LASTID")));
 
 		return cursor.getInt(cursor.getColumnIndex("LASTID"));
+	}
+	
+	public int getLastMessageId()
+	{
+		database = databaseHelper.getReadableDatabase();		
+
+		Cursor cursor = database.rawQuery("SELECT MAX(" + Constant.COLUMN_MESSAGE_ID + 
+				") AS LAST_MESSAGE_ID FROM " + Constant.TABLE_NAME  , null);
+		
+		cursor.moveToFirst();
+
+		Log.d("Database", "LAST_MESSAGE_ID: "+cursor.getInt(cursor.getColumnIndex("LAST_MESSAGE_ID")));
+
+		return cursor.getInt(cursor.getColumnIndex("LAST_MESSAGE_ID"));
 	}
 
 	public static List<Message> getMessage_List() {

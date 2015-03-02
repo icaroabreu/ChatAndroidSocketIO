@@ -48,9 +48,7 @@ public class MainActivity extends Activity {
 			else
 			{        		
 				fm.beginTransaction().show(screens[CHATSCREEN]).commit();
-				fm.beginTransaction().hide(screens[LOGINSCREEN]).commit();
-
-				socketController.emit("setNickname", preferences.getString(Constant.USER_NAME, ""));
+				fm.beginTransaction().hide(screens[LOGINSCREEN]).commit();			
 
 				getActionBar().show();
 			}
