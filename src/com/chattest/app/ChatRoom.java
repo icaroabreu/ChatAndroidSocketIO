@@ -153,8 +153,7 @@ public class ChatRoom extends Fragment {
 	}	
 	
 	public void appendMessage()
-	{		
-		Log.d("List Size", "Size: "+DatabaseManager.getMessage_List().size());
+	{				
 		
 		activity.runOnUiThread(new Runnable() {
 			

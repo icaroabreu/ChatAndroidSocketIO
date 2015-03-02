@@ -60,14 +60,14 @@ public class SocketController {
 			
 			JSONObject data = (JSONObject)messages[0];
 			
-			DatabaseManager manager = new DatabaseManager(activity);
-			
+			final DatabaseManager manager = new DatabaseManager(activity);
+						
 			try {
-				JSONArray old_messages = data.getJSONArray("messages");										
+				JSONArray old_messages = data.getJSONArray("messages");						
 				
 				for(int i = 0; i < old_messages.length(); i++)
 				{
-					Message message = new Message();
+					final Message message = new Message();
 					message.setMessageId(old_messages.getJSONObject(i).getInt("_id"));
 					message.setAuthor(old_messages.getJSONObject(i).getString("name"));
 					message.setMessage(old_messages.getJSONObject(i).getString("message"));
@@ -75,7 +75,15 @@ public class SocketController {
 					message.setState(Constant.MESSAGE_ARRIVED_IN_SERVER);
 					message.setFlag(old_messages.getJSONObject(i).getString("flag"));
 					
-					message.setId((int)manager.insertMessage(message));
+					activity.runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							
+							message.setId((int)manager.insertMessage(message));
+							
+						}
+					});					
 					
 					if(message.getId() != -1)
 					{				
@@ -108,7 +116,9 @@ public class SocketController {
 				
 				if(activity.getPreferences().getString(Constant.USER_NAME, "").equals(data.getString("name")) && !activity.getPreferences().getBoolean(Constant.FIRST_TIME_SETUP, false))
 				{
-					emit("get_old_messages", activity.databaseManager.getLastMessageId());
+					//First Time
+					activity.getPreferences().edit().putBoolean(Constant.FIRST_TIME_SETUP, true).commit();
+					emit("get_first_time_messages");
 					activity.showFragment(MainActivity.CHATSCREEN);
 				}
 				else if(activity.getPreferences().getString(Constant.USER_NAME, "").equals(data.getString("name")) && activity.getPreferences().getBoolean(Constant.FIRST_TIME_SETUP, false))
@@ -172,9 +182,9 @@ public class SocketController {
 			
 			JSONObject data = (JSONObject)args[0];
 			
-			Message message = new Message();
+			final Message message = new Message();
 			
-			DatabaseManager manager = new DatabaseManager(activity);
+			final DatabaseManager manager = new DatabaseManager(activity);
 			
 			Log.d("SocketController", data.toString());
 			
@@ -186,7 +196,15 @@ public class SocketController {
 				message.setDate(data.getLong("date"));	
 				message.setFlag(data.getString("flag"));
 				
-				message.setId((int)manager.insertMessage(message));
+				activity.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						message.setId((int)manager.insertMessage(message));
+						
+					}
+				});			
 				
 				if(message.getId() != -1)
 				{				

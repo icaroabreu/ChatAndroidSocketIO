@@ -10,6 +10,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@null"
+        android:focusableInTouchMode="true"
         android:divider="@null"
         android:transcriptMode="alwaysScroll"
         android:stackFromBottom="true">

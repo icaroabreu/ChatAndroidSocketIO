@@ -37,14 +37,22 @@ public class DatabaseManager {
 		values.put(Constant.COLUMN_AUTHOR, message.getAuthor());
 		values.put(Constant.COLUMN_MESSAGE, message.getMessage());
 		values.put(Constant.COLUMN_DATE, message.getDate());
-		values.put(Constant.COLUMN_STATE, message.getState());
+		values.put(Constant.COLUMN_STATE, message.getState());	
 		values.put(Constant.COLUMN_FLAG, message.getFlag());
+		
+		if(message.getMessageId() != 0)
+		{
+			values.put(Constant.COLUMN_MESSAGE_ID, message.getMessageId());
+		}
 		
 		long new_message_id = database.insert(Constant.TABLE_NAME, "NULL", values);
 				
-		message.setId((int)new_message_id);
-		
-		Message_List.add(message);
+		if(new_message_id != -1)
+		{
+			message.setId((int)new_message_id);
+			
+			Message_List.add(message);
+		}
 
 		return new_message_id;
 	}
@@ -66,23 +74,14 @@ public class DatabaseManager {
 
 				Message message = new Message();
 				message.setId(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN__ID)));
+				message.setMessageId(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_MESSAGE_ID)));
 				message.setAuthor(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_AUTHOR)));
 				message.setDate(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_DATE))));
 				message.setMessage(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_MESSAGE)));
 				message.setFlag(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_FLAG))); 
 				message.setState(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_STATE)));          							
 
-				Message_List.add(message);  
-				
-//				Collections.sort(Message_List, new Comparator<Message>() {
-//
-//					@Override
-//					public int compare(Message message1, Message message2) {											
-//						
-//						return Long.compare(message1.getDate(), message2.getDate());
-//					}
-//					
-//				});
+				Message_List.add(message);  							
 
 				cursor.moveToNext();
 			}

@@ -45,6 +45,7 @@ public class Login extends Fragment {
 				main.getSocketController().emit("setNickname", name.getText().toString());
 				
 				main.getPreferences().edit().putString(Constant.USER_NAME, name.getText().toString()).commit();
+				
 			}
 		});
 
