@@ -151,7 +151,7 @@ public class ChatRoom extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				
-				if(DatabaseManager.getMessage_List().get(position).getState() != Constant.MESSAGE_ARRIVED_IN_SERVER)
+				if(DatabaseManager.getMessage_List().get(position -1).getState() != Constant.MESSAGE_ARRIVED_IN_SERVER)
 				{
 					Message new_message = DatabaseManager.getMessage_List().get(position);								
 					
