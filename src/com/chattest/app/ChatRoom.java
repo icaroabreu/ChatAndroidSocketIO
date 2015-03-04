@@ -1,10 +1,11 @@
 package com.chattest.app;
 
 import java.util.Date;
+import java.util.List;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
-import android.provider.CalendarContract.Attendees;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,8 +15,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.chattest.app.controller.DatabaseManager;
@@ -38,6 +39,12 @@ public class ChatRoom extends Fragment {
 	private Button btn_send;
 	
 	private boolean imTyping;		
+	
+	private View load_more_header;
+	
+	private RelativeLayout load_more_button;
+	
+	private DatabaseManager manager;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,24 +54,31 @@ public class ChatRoom extends Fragment {
 		
 		activity = (MainActivity)getActivity();			
 		
+		load_more_header = ((LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.load_more_header, null, false);
+		load_more_button = (RelativeLayout)load_more_header.findViewById(R.id.load_more_button);
+		load_more_button.setVisibility(View.GONE);
+		
 		list_messages = (ListView)view.findViewById(R.id.list_messages);	
 		msg_input = (EditText)view.findViewById(R.id.msg_input);
 		btn_send = (Button)view.findViewById(R.id.btn_send);
 		
-		adapter = new MessageAdapter(activity, DatabaseManager.getMessage_List());
+		if(adapter == null)
+			adapter = new MessageAdapter(activity, DatabaseManager.getMessage_List());
 		
 		list_messages.setAdapter(adapter);
+		list_messages.addHeaderView(load_more_header);
 		
-		DatabaseManager manager = new DatabaseManager(getActivity());
+		manager = new DatabaseManager(getActivity());
 		
 		int databaseSize = manager.databaseSize(); 
 		
-		if(databaseSize < 30)
+		if(databaseSize <= 30)
 			manager.retrieveMessages(0);
 		else
 		{
-			manager.retrieveMessages(manager.lastId() - 31);
-		}
+			manager.retrieveMessages(manager.lastId() - 30);
+			load_more_button.setVisibility(View.VISIBLE);
+		}				
 		
 		appendMessage();	
 		
@@ -79,8 +93,8 @@ public class ChatRoom extends Fragment {
 					
 					String user = activity.getPreferences().getString(Constant.USER_NAME, "NaN");
 					
-					if(!user.equals("NaN"))
-					{
+					if(!user.equals("NaN") && !(msg_input.getText().toString().equals("") || msg_input.getText().toString().equals(" ")))
+					{						
 						new_message.setAuthor(user);
 						new_message.setDate(new Date().getTime());
 						new_message.setFlag("message");
@@ -91,7 +105,7 @@ public class ChatRoom extends Fragment {
 						{
 							activity.getSocketController().sendAttempt(new_message);
 							msg_input.setText("");
-							appendMessage();
+							appendMessage();														
 						}
 					
 					}
@@ -147,6 +161,42 @@ public class ChatRoom extends Fragment {
 			}
 			
 			
+		});
+		
+		load_more_button.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {				
+
+				Message messagePlaceHolder = DatabaseManager.getMessage_List().get(0);
+				
+				manager.retrieveOldMessages(messagePlaceHolder.getId());
+				
+				adapter.notifyDataSetChanged();
+				
+				if (DatabaseManager.getMessage_List() != null && DatabaseManager.getMessage_List().size() > 0) {
+					
+					final int index = DatabaseManager.getMessage_List().indexOf(messagePlaceHolder);
+					
+					list_messages.clearFocus();
+					list_messages.postDelayed(new Runnable() {
+						
+						@Override
+						public void run() {
+							
+							list_messages.setFocusable(true);
+							list_messages.setSelection(index + 1);
+							
+						}
+					}, 0);
+				}
+				
+				if(DatabaseManager.getMessage_List().get(0).getId() == 1)
+				{
+					load_more_button.setVisibility(View.GONE);
+				}
+				
+			}
 		});
 		
 		return view;

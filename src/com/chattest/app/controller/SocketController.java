@@ -83,14 +83,10 @@ public class SocketController {
 							message.setId((int)manager.insertMessage(message));
 							
 						}
-					});					
+					});										
 					
-					if(message.getId() != -1)
-					{				
-						ChatRoom room = (ChatRoom)activity.screens[MainActivity.CHATSCREEN];
-						room.appendMessage();
-					}
 				}
+				((ChatRoom)activity.screens[MainActivity.CHATSCREEN]).appendMessage();
 				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

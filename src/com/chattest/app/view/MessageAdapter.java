@@ -55,11 +55,17 @@ public class MessageAdapter extends BaseAdapter {
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);					
 		
 		if(message.getFlag().equals(Constant.MESSAGE_TYPE_MESSAGE))
-		{
+		{			
+					
 			if(message.isMyMessage(activity))
 			{
 				convertView = inflater.inflate(R.layout.message_item_right, null);
 				LinearLayout message_holder = (LinearLayout)convertView.findViewById(R.id.message_holder);
+				TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
+				TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
+				
+				message_text.setText(message.getMessage());
+				message_date.setText(new SimpleDateFormat("hh:mm dd/MM/yyyy").format(new Date(message.getDate())));
 				
 				if(message.getState() == Constant.MESSAGE_HAS_NOT_ARRIVED_IN_SERVER)
 				{
@@ -73,15 +79,15 @@ public class MessageAdapter extends BaseAdapter {
 			else
 			{
 				convertView = inflater.inflate(R.layout.message_item_left, null);
+				TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
+				TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
+				TextView authors_name = (TextView)convertView.findViewById(R.id.message_author);
+				
+				authors_name.setText(message.getAuthor());
+				message_text.setText(message.getMessage());
+				message_date.setText(new SimpleDateFormat("hh:mm dd/MM/yyyy").format(new Date(message.getDate())));
 			}
 			
-			TextView authors_name = (TextView)convertView.findViewById(R.id.message_author);
-			TextView message_text = (TextView)convertView.findViewById(R.id.message_text);
-			TextView message_date = (TextView)convertView.findViewById(R.id.message_date);
-			
-			authors_name.setText(message.getAuthor());
-			message_text.setText(message.getMessage());
-			message_date.setText(new SimpleDateFormat("hh:mm dd/MM/yyyy").format(new Date(message.getDate())));
 		}
 		else if (message.getFlag().equals(Constant.MESSAGE_TYPE_USER_JOINED))
 		{

@@ -66,7 +66,9 @@ public class DatabaseManager {
 
 		Log.d("Database" , query);
 
-		Cursor cursor = database.rawQuery(query, null);			
+		Cursor cursor = database.rawQuery(query, null);		
+		
+		List<Message> temp_list = new ArrayList<Message>();
 
 		if (cursor.moveToFirst()) {
 
@@ -81,11 +83,13 @@ public class DatabaseManager {
 				message.setFlag(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_FLAG))); 
 				message.setState(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_STATE)));          							
 
-				Message_List.add(message);  							
+				temp_list.add(message);  							
 
 				cursor.moveToNext();
 			}
-		}			
+		}	
+		
+		Message_List.addAll(0, temp_list);
 	
 	}
 	
@@ -94,11 +98,15 @@ public class DatabaseManager {
 		database = databaseHelper.getReadableDatabase();		
 
 		String query = "SELECT * FROM " + Constant.TABLE_NAME + " WHERE " + Constant.COLUMN__ID + 
-				" > " + fist_id + " LIMIT " + Constant.MESSAGE_LIMIT;
+				" BETWEEN " + (fist_id - Integer.parseInt(Constant.MESSAGE_LIMIT))+ " AND " + (fist_id - 1); 
 
 		Log.d("Database" , query);
 
-		Cursor cursor = database.rawQuery(query, null);			
+		Cursor cursor = database.rawQuery(query, null);		
+		
+		List<Message> temp_list = new ArrayList<Message>();
+		
+		Log.d("Database" , "Cursor Count: "+cursor.getCount());
 
 		if (cursor.moveToFirst()) {
 
@@ -106,16 +114,31 @@ public class DatabaseManager {
 
 				Message message = new Message();
 				message.setId(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN__ID)));
+				message.setMessageId(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_MESSAGE_ID)));
 				message.setAuthor(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_AUTHOR)));
 				message.setDate(Long.parseLong(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_DATE))));
 				message.setMessage(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_MESSAGE)));
-				message.setFlag(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_FLAG)));            							
+				message.setFlag(cursor.getString(cursor.getColumnIndex(Constant.COLUMN_FLAG))); 
+				message.setState(cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_STATE)));             							
 
 				Message_List.add(message);      	            
 
 				cursor.moveToNext();
 			}
-		}			
+		}					
+		
+		Message_List.addAll(0, temp_list);
+		
+		Collections.sort(Message_List, new Comparator<Message>() {
+
+			@Override
+			public int compare(Message msg1, Message msg2) {
+				// TODO Auto-generated method stub				
+				
+				return Integer.compare(msg1.getId(), msg2.getId());
+			}
+			
+		});
 	
 	}
 	

@@ -6,6 +6,7 @@
     <string name="enter_name">Enter your name</string>
     <string name="btn_join">JOIN</string>
     <string name="btn_send">Send</string>
+    <string name="load_more">Load More</string>
     <string name="at_span">at</string>
 
 </resources>

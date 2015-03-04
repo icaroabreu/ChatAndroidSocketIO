@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.chattest.app.controller.DatabaseManager;
 import com.chattest.app.controller.SocketController;
@@ -42,6 +43,8 @@ public class MainActivity extends Activity {
 
 			if(preferences.getString(Constant.USER_NAME, "").equals(""))
 			{        		
+				
+				//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 				fm.beginTransaction().show(screens[LOGINSCREEN]).commit();
 				fm.beginTransaction().hide(screens[CHATSCREEN]).commit();
 			}
@@ -49,8 +52,7 @@ public class MainActivity extends Activity {
 			{        		
 				fm.beginTransaction().show(screens[CHATSCREEN]).commit();
 				fm.beginTransaction().hide(screens[LOGINSCREEN]).commit();			
-
-				getActionBar().show();
+				//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);				
 			}
 		}
 	}
@@ -93,13 +95,14 @@ public class MainActivity extends Activity {
 	protected void onDestroy() {
 
 		socketController.getSocket().disconnect();
-		socketController.getSocket().on("old_messages", socketController.onOldMessages);
-		socketController.getSocket().on("message", socketController.onMessage);		
-		socketController.getSocket().on("user_joined", socketController.onUserJoined);
-		socketController.getSocket().on("user_left", socketController.onUserLeft);
-		socketController.getSocket().on("typing", socketController.onTyping);
-		socketController.getSocket().on("stop_typing",socketController.onStopTyping);
-		socketController.getSocket().on(Socket.EVENT_CONNECT, socketController.onConnect);
+		socketController.getSocket().off("old_messages", socketController.onOldMessages);
+		socketController.getSocket().off("message", socketController.onMessage);		
+		socketController.getSocket().off("user_joined", socketController.onUserJoined);
+		socketController.getSocket().off("user_left", socketController.onUserLeft);
+		socketController.getSocket().off("typing", socketController.onTyping);
+		socketController.getSocket().off("stop_typing",socketController.onStopTyping);
+		socketController.getSocket().off(Socket.EVENT_CONNECT, socketController.onConnect);
+		socketController.getSocket().off(Socket.EVENT_DISCONNECT, socketController.onDisconnect);
 
 		super.onDestroy();
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="actionbar">#3a74c5</color>
+    <color name="actionbar">#adadad</color>
     <color name="login_background">#50cccccc</color>
     <color name="body_background">#e8e8e8</color>
     <color name="body_background_green">#82e783</color>
@@ -8,12 +8,13 @@
     <color name="title_gray">#434343</color>
     <color name="white">#ffffff</color>
     <color name="black">#000</color>
-    <color name="bg_msg_you">#5eb964</color>
-    <color name="bg_msg_from">#e5e7eb</color>
+    <color name="bg_msg_you">#ffffff</color>
+    <color name="bg_msg_from">#ffffff</color>
     <color name="msg_border_color">#a1a1a1</color>
     <color name="bg_btn_join">#333</color>
     <color name="bg_msg_input">#e8e8e8</color>
     <color name="text_msg_input">#626262</color>
     <color name="name_label">#333</color>
     <color name="misc_message">#777777</color>
+    <color name="bg_list">#d9d9d9</color>
 </resources>

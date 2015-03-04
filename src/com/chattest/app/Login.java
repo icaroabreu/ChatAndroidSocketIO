@@ -1,15 +1,15 @@
 package com.chattest.app;
 
-import com.chattest.app.utility.Constant;
-
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.chattest.app.utility.Constant;
 
 @SuppressWarnings("deprecation")
 public class Login extends Fragment {
@@ -31,9 +31,7 @@ public class Login extends Fragment {
 		name = (EditText) view.findViewById(R.id.name);
 		btn_join = (Button) view.findViewById(R.id.btnJoin);
 		
-		main = (MainActivity)getActivity();
-
-		main.getActionBar().hide();
+		main = (MainActivity)getActivity();	
 
 		setHasOptionsMenu(false);			
 
