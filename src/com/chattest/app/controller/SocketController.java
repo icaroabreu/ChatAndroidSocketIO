@@ -38,7 +38,7 @@ public class SocketController {
 			
 			socket.on("old_messages", onOldMessages);
 			socket.on("message", onMessage);
-			socket.on("message_recieved", onMessageRecieved);
+			socket.on("message_received", onMessageReceived);
 			socket.on("user_joined", onUserJoined);
 			socket.on("user_left", onUserLeft);
 			socket.on("typing", onTyping);
@@ -287,7 +287,7 @@ public class SocketController {
 		}
 	};
 	
-	public Emitter.Listener onMessageRecieved = new Emitter.Listener() {
+	public Emitter.Listener onMessageReceived = new Emitter.Listener() {
 		
 		@Override
 		public void call(Object... message) {
