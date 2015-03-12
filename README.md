@@ -1,6 +1,8 @@
 # ChatAndroidSocketIO
 Little group chat using Node.js with SocketIO as chat server and MongoDB as database.
 
+The server is located here https://github.com/icaroabreu/socketio-server
+
 The Android SocketIO library used is https://github.com/cmarrero01/socket.io-client.java by cmarrero01.
 
 ## Change Log
