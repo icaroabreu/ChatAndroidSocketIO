@@ -12,7 +12,6 @@ public class Constant {
 	/* Server URL */
 	
 	public static final String WEBSOCKET_SERVER_URL = "https://sucket.herokuapp.com/";
-	//public static final String WEBSOCKET_SERVER_URL = "http://192.168.1.114:5000";
 	
 	/* Message Types */
 	
@@ -56,6 +55,6 @@ public class Constant {
     
     /* Misc */
     
-    public static final String SEPARATOR = "¬SEPARATOR¬";
+    public static final String SEPARATOR = "Â¬SEPARATORÂ¬";
 
 }
